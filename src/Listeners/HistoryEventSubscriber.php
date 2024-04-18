@@ -2,6 +2,7 @@
 
 namespace Panoscape\History\Listeners;
 
+use Illuminate\Events\Dispatcher;
 use Panoscape\History\Events\ModelChanged;
 use Panoscape\History\HistoryObserver;
 use Panoscape\History\History;
@@ -14,7 +15,7 @@ class HistoryEventSubscriber
      * @param  ModelChanged  $event
      * @return void
      */
-    public function onModelChanged($event)
+    public function onModelChanged(ModelChanged $event)
     {
         if(!HistoryObserver::filter(null)) return;
 
@@ -31,12 +32,12 @@ class HistoryEventSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param  Illuminate\Events\Dispatcher  $events
+     * @param  Dispatcher  $events
      */
-    public function subscribe($events)
+    public function subscribe(Dispatcher $events)
     {
         $events->listen(
-            \Panoscape\History\Events\ModelChanged::class,
+            ModelChanged::class,
             static::class.'@onModelChanged'
         );
     }

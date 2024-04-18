@@ -2,12 +2,14 @@
 
 namespace Panoscape\History;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 trait HasOperations
 {
     /**
-     * Get all of the agent's operations.
+     * Get all the agent's operations.
      */
-    public function operations()
+    public function operations():MorphMany
     {
         return $this->morphMany(History::class, 'user');
     }

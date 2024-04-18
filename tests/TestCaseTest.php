@@ -12,14 +12,14 @@ use Panoscape\History\Events\ModelChanged;
 
 class TestCaseTest extends TestCase
 {
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             HistoryServiceProvider::class,
         ];
     }
 
-    protected function getPackageAliases($app)
+    protected function getPackageAliases($app): array
     {
         return [
             'App\History' => History::class
@@ -79,18 +79,18 @@ class TestCaseTest extends TestCase
         $builder = $this->app['db']->connection()->getSchemaBuilder();
 
         $builder->create('users', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('name');
             $table->string('password');
         });
 
         $builder->create('articles', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('title');
             $table->softDeletes();
         });
 
-        User::create(['name' => 'Esther', 'password' => '6ecd6a17b723']);
+        User::query()->create(['name' => 'Esther', 'password' => '6ecd6a17b723']);
 
         $this->loadMigrationsFrom(realpath(__DIR__.'/../src/migrations'));
     }
@@ -167,7 +167,7 @@ class TestCaseTest extends TestCase
         $this->assertNotNull($article);
         $histories = $article->histories;
         $this->assertNotNull($histories);
-        $this->assertEquals(1, count($histories));
+        $this->assertCount(1, $histories);
         $history = $histories[0];
         $this->assertNotTrue($history->hasUser());
         $this->assertNull($history->user());
@@ -185,7 +185,7 @@ class TestCaseTest extends TestCase
         $this->assertNotNull($article);
         $histories = $article->histories;
         $this->assertNotNull($histories);
-        $this->assertEquals(1, count($histories));
+        $this->assertCount(1, $histories);
         $history = $histories[0];
         $this->assertTrue($history->hasUser());
         $this->assertNotNull($history->user());
@@ -194,7 +194,7 @@ class TestCaseTest extends TestCase
         
         $operations = $user->operations;
         $this->assertNotNull($operations);
-        $this->assertEquals(1, count($operations));
+        $this->assertCount(1, $operations);
         $operation = $operations[0];
         $this->assertEquals($history->toJson(), $operation->toJson());
     }
@@ -212,7 +212,8 @@ class TestCaseTest extends TestCase
         $this->assertEquals([$article->id], $history->meta);
     }
 
-    private function actingAsAdmin($admin) {
+    private function actingAsAdmin($admin): TestCaseTest
+    {
         $defaultGuard = config('auth.defaults.guard');
         $this->actingAs($admin, 'admin');
         Auth::shouldUse($defaultGuard);

@@ -58,11 +58,11 @@ class History extends Model
     }
 
     /**
-     * Returns whether or not a user type/id are present.
+     * Returns whether a user type/id are present.
      *
      * @return bool
      */
-    public function hasUser()
+    public function hasUser(): bool
     {
         return !empty($this->user_type) && !empty($this->user_id);
     }

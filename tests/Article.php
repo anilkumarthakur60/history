@@ -13,7 +13,7 @@ class Article extends Model
     protected $guarded = [];
     protected $hidden = [];
 
-    public function getModelLabel()
+    public function getModelLabel():string
     {
         return $this->getOriginal('title', $this->title);
     }

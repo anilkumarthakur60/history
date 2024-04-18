@@ -114,12 +114,12 @@ class HistoryObserver
         return static::getAuth()->check() ? static::getAuth()->user()->id : null;
     }
 
-    public static function getUserType()
+    public static function getUserType(): ?string
     {
         return static::getAuth()->check() ? get_class(static::getAuth()->user()) : null;
     }
 
-    public static function filter($action)
+    public static function filter($action): bool
     {
         if(!static::getAuth()->check()) {
             if(in_array('nobody', config('history.user_blacklist'))) {
@@ -136,7 +136,7 @@ class HistoryObserver
     private static function getAuth()
     {
         $guards = config('history.auth_guards');
-        if(is_bool($guards) && $guards == true)
+        if(is_bool($guards) && $guards)
             return auth(static::activeGuard());
         if(is_array($guards))
         {

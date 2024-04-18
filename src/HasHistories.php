@@ -2,22 +2,24 @@
 
 namespace Panoscape\History;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 trait HasHistories
 {
     /**
-     * Get all of the model's histories.
+     * Get all the model's histories.
      */
-    public function histories()
+    public function histories():MorphMany
     {
         return $this->morphMany(History::class, 'model');
     }
 
     /**
-     * Get all of the model's histories.
+     * Get all the model's histories.
      *
      * @return void
      */
-    public static function bootHasHistories()
+    public static function bootHasHistories():void
     {
         if(!config('history.enabled')) {
             return;
@@ -43,7 +45,7 @@ trait HasHistories
      *
      * @return array
      */
-    public function getModelMeta($event)
+    public function getModelMeta($event): ?array
     {
         switch($event)
         {
@@ -57,17 +59,18 @@ trait HasHistories
                 foreach ($changes as $key => $value) {
                     if(static::isIgnored($this, $key)) continue;
 
-                    array_push($changed, ['key' => $key, 'old' => $this->getOriginal($key), 'new' => $this->$key]);
+                    $changed[] = ['key' => $key, 'old' => $this->getOriginal($key), 'new' => $this->$key];
                 }
                 return $changed;
             case 'created':
             case 'deleting':
             case 'restored':
+                default:
                 return null;
         }
     }
 
-    public static function isIgnored($model, $key)
+    public static function isIgnored($model, $key): bool
     {
         $blacklist = config('history.attributes_blacklist');
         $name = get_class($model);
@@ -80,5 +83,5 @@ trait HasHistories
      *
      * @return string
      */
-    public abstract function getModelLabel();
+    public abstract function getModelLabel(): string;
 }
