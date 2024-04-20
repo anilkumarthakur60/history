@@ -72,7 +72,18 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, dom, fileinfo
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache/files
+            ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
+      - name: Install Laravel
+        run: composer require "laravel/framework:${{ matrix.laravel-versions }}" --no-update
 
       - name: Composer Install
         run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
