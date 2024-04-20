@@ -37,10 +37,18 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, dom, fileinfo
 
-      - name: Install Composer dependencies
-        run: |
-          composer require --dev --no-progress --no-suggest -n -o "laravel/framework:${{ matrix.laravel-versions }}"
-          composer install --no-progress --no-suggest -n -o
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache/files
+            ~/.cache/composer/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Migrate phpunit config
         if: ${{ matrix.php-versions >= '8.1' }}
