@@ -81,11 +81,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Install dependencies
+      - name: Composer Install
         run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Migrate phpunit config
-        if: ${{ matrix.php-versions >= '8.1' }}
-        run: composer exec -- phpunit --migrate-configuration
       - name: Run test suite
         run: composer test:dist
